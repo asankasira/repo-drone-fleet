@@ -13,4 +13,3 @@ spring:
         bootstrap-mode: default
   jpa:
     defer-datasource-initialization: true
-
