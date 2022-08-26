@@ -1,7 +1,6 @@
 package com.asankasi.dronefleet.controller;
 
 
-import com.asankasi.dronefleet.model.DroneInfo;
 import com.asankasi.dronefleet.model.Drone;
 import com.asankasi.dronefleet.model.DroneMedicationItemLine;
 import com.asankasi.dronefleet.repository.DroneItemLineRepository;
@@ -35,13 +34,13 @@ public class DroneAppController {
         itemLineRepository.save(itemLine);
     }
 
-    @GetMapping("/drone-info/{id}")
+    @GetMapping("/drone-info/{id}/battery-level")
     public ResponseEntity<?> checkBatteryStatus(@PathVariable Long id) {
-        DroneInfo info = droneAppService.getDroneStatsInfo(id);
-        if(info == null) {
+        var batteryStatus = droneAppService.checkDroneBatteryStatus(id);
+        if(batteryStatus == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "No drone stats info found for id: " + id));
         }
-        return ResponseEntity.ok(info);
+        return ResponseEntity.ok(batteryStatus);
     }
 
     @Autowired
