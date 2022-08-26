@@ -15,7 +15,6 @@ public class DroneMedicationItemLine {
     private Long droneID;
     private Long medicationID;
     private Integer quantity;
-    private Double lineWeight;
 
     public String getItemLineID() {
         return itemLineID;
@@ -31,9 +30,5 @@ public class DroneMedicationItemLine {
 
     public Integer getQuantity() {
         return quantity;
-    }
-
-    public Double getLineWeight() {
-        return lineWeight;
     }
 }

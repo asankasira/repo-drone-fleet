@@ -1,10 +1,9 @@
 package com.asankasi.dronefleet.repository;
 
-import com.asankasi.dronefleet.model.DroneMedicationItemLine;
+import com.asankasi.dronefleet.model.DroneInfo;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DroneItemLineRepository extends CrudRepository<DroneMedicationItemLine, Long> {
-
+public interface DroneInfoRepository extends CrudRepository<DroneInfo, Long> {
 }

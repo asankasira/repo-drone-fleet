@@ -15,7 +15,7 @@ public class Drone {
     @Enumerated(EnumType.STRING)
     private DroneModel model;
 
-    private Integer maxWeight;
+    private Double maxWeight;
 
     @OneToOne(mappedBy = "drone", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn
@@ -33,11 +33,15 @@ public class Drone {
         return model;
     }
 
-    public Integer getMaxWeight() {
+    public Double getMaxWeight() {
         return maxWeight;
     }
 
     public DroneInfo getInfo() {
         return info;
+    }
+
+    public Double getRemainingWeight() {
+        return maxWeight - info.getCurrentLoad();
     }
 }
