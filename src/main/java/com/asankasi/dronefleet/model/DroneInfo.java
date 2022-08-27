@@ -30,6 +30,10 @@ public class DroneInfo {
         return droneID;
     }
 
+    public void setDroneID(Long droneID) {
+        this.droneID = droneID;
+    }
+
     public State getState() {
         return state;
     }
@@ -40,6 +44,10 @@ public class DroneInfo {
 
     public Integer getBatteryCapacity() {
         return batteryCapacity;
+    }
+
+    public void setBatteryCapacity(Integer batteryCapacity) {
+        this.batteryCapacity = batteryCapacity;
     }
 
     public Integer getCurrentLoad() {

@@ -14,4 +14,7 @@ public interface DroneRepository extends CrudRepository<Drone, Long> {
 
     @Query("select d from Drone d inner join d.info n where n.batteryCapacity >= :capacity and n.state in :sList")
     List<Drone> getAvailableDrones(Integer capacity, Collection<State> sList);
+
+    @Query("select d from Drone d inner join d.info n where n.state in :sList")
+    List<Drone> findAllOperatingDrones(Collection<State> sList);
 }

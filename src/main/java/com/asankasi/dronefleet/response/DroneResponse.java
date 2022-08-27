@@ -30,4 +30,20 @@ public class DroneResponse {
         res.currentLoad = drone.getInfo().getCurrentLoad();
         return res;
     }
+
+    public Long getDroneID() {
+        return droneID;
+    }
+
+    public Integer getBatteryCapacity() {
+        return batteryCapacity;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public Integer getCurrentLoad() {
+        return currentLoad;
+    }
 }

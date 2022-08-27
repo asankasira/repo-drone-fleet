@@ -18,6 +18,12 @@ import java.util.List;
 public class DroneAppController {
     private DroneAppService droneAppService;
 
+    @GetMapping( "/drones")
+    public ResponseEntity<?> getAllRegisteredDrones() {
+        var dronesList = droneAppService.findAllRegisteredDrones();
+        return ResponseEntity.ok(dronesList);
+    }
+
     @PostMapping( "/drones")
     public ResponseEntity<?> registerDrone(@RequestBody Drone drone) {
         var customResp = droneAppService.registerDrone(drone);

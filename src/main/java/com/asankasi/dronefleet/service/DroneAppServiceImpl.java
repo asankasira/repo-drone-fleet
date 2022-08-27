@@ -8,6 +8,7 @@ import com.asankasi.dronefleet.repository.DroneInfoRepository;
 import com.asankasi.dronefleet.repository.DroneItemLineRepository;
 import com.asankasi.dronefleet.repository.DroneRepository;
 import com.asankasi.dronefleet.response.CustomApiResponse;
+import com.asankasi.dronefleet.response.DroneResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,9 +20,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.asankasi.dronefleet.util.Constants.DRONE_BATTERY_THRESHOLD;
 import static com.asankasi.dronefleet.util.Constants.GENERAL_MESSAGE_KEY;
+import static com.asankasi.dronefleet.model.State.*;
 
 @Service
 public class DroneAppServiceImpl implements DroneAppService {
@@ -174,6 +177,23 @@ public class DroneAppServiceImpl implements DroneAppService {
                 .addAttribute("currentLoad", droneInfo.getCurrentLoad());
 
         return res;
+    }
+
+    @Override
+    public List<DroneResponse> findAllRegisteredDrones() {
+        Iterable<Drone> iterable = droneRepository.findAll();
+        return StreamSupport.stream(iterable.spliterator(), false).map(DroneResponse::fromDrone).toList();
+    }
+
+    @Override
+    public List<DroneResponse> findAllOperatingDrones() {
+        Iterable<Drone> iterable = droneRepository.findAllOperatingDrones(Arrays.asList(LOADED, DELIVERING, DELIVERED, RETURNING));
+        return StreamSupport.stream(iterable.spliterator(), false).map(DroneResponse::fromDrone).toList();
+    }
+
+    @Override
+    public void updateDronesInfo(List<DroneInfo> droneInfoList) {
+        infoRepository.saveAll(droneInfoList);
     }
 
     @Autowired
