@@ -1,11 +1,5 @@
--- insert into Drone(serial_number, model, state, battery_capacity, max_weight)
--- values('SX-1003', 'LightWeight', 'Ready', 95, 500);
---
--- insert into Drone(serial_number, model, battery_capacity, max_weight)
--- values('MRX-2004', 'Heavy', 72, 1200);
 
 -- Medications
-
 insert into Medication(name, code, unit_weight) values('Melphalan', 'ML_04',  20);
 insert into Medication(name, code, unit_weight) values('Gemcitabine', 'GM_56',  35);
 insert into Medication(name, code, unit_weight) values('Phytomenadione', 'PHY_01',  10);
