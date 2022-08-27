@@ -26,8 +26,17 @@ public class DroneAppServiceImpl implements DroneAppService {
     private MedicationService medicationService;
 
     @Override
-    public void registerDrone(Drone drone) {
-        droneRepository.save(drone);
+    public CustomApiResponse registerDrone(Drone drone) {
+        var res = new CustomApiResponse();
+        if(drone.getMaxWeight() > 500) {
+            res.setStatus(HttpStatus.BAD_REQUEST);
+            res.addError("Drone weight should not exceed 500");
+            return res;
+        }
+        drone.getInfo().setDrone(drone);
+        var d = droneRepository.save(drone);
+        res.addAttribute(GENERAL_MESSAGE_KEY, "Drone is registered with id " + d.getDroneID());
+        return res;
     }
 
     @Override
@@ -49,10 +58,16 @@ public class DroneAppServiceImpl implements DroneAppService {
     }
 
     @Override
-    public Map<String, String> checkDroneBatteryStatus(Long droneID) {
-        return droneRepository.findById(droneID).map(Drone::getInfo)
-                .map(in -> Map.of("batteryCapacity", in.getBatteryCapacity() + "%"))
-                .orElse(null);
+    public CustomApiResponse checkDroneBatteryStatus(Long droneID) {
+        var res = new CustomApiResponse();
+        var info = droneRepository.findById(droneID).map(Drone::getInfo).orElse(null);
+        if(info == null) {
+            res.setStatus(HttpStatus.BAD_REQUEST);
+            res.addError("No drone stats info found for id: " + droneID);
+            return res;
+        }
+        res.addAttribute("batteryCapacity", info.getBatteryCapacity() + "%");
+        return res;
     }
 
     @Override

@@ -2,14 +2,14 @@ package com.asankasi.dronefleet.service;
 
 import com.asankasi.dronefleet.model.Drone;
 import com.asankasi.dronefleet.model.DroneMedicationItemLine;
+import com.asankasi.dronefleet.response.CustomApiResponse;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.Map;
 
 public interface DroneAppService {
 
-    void registerDrone(Drone drone);
+    CustomApiResponse registerDrone(Drone drone);
 
     List<DroneMedicationItemLine> getLoadedMedicalItems(Long droneID);
 
@@ -19,5 +19,5 @@ public interface DroneAppService {
 
     List<Drone> getAvailableDrones();
 
-    Map<String, String> checkDroneBatteryStatus(Long droneID);
+    CustomApiResponse checkDroneBatteryStatus(Long droneID);
 }
