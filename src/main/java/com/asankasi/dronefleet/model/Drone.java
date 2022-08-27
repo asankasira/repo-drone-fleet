@@ -1,6 +1,8 @@
 package com.asankasi.dronefleet.model;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Drone {
@@ -15,11 +17,15 @@ public class Drone {
     @Enumerated(EnumType.STRING)
     private DroneModel model;
 
-    private Double maxWeight;
+    private Integer maxWeight;
 
-    @OneToOne(mappedBy = "drone", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "drone", cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
     private DroneInfo info = new DroneInfo();
+
+    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "drone_id")
+    private List<DroneMedicationItemLine> itemLines = new ArrayList<>();
 
     public Long getDroneID() {
         return droneID;
@@ -33,7 +39,7 @@ public class Drone {
         return model;
     }
 
-    public Double getMaxWeight() {
+    public Integer getMaxWeight() {
         return maxWeight;
     }
 
@@ -41,7 +47,11 @@ public class Drone {
         return info;
     }
 
-    public Double getRemainingWeight() {
+    public Integer getRemainingWeight() {
         return maxWeight - info.getCurrentLoad();
+    }
+
+    public List<DroneMedicationItemLine> getItemLines() {
+        return itemLines;
     }
 }

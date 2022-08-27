@@ -17,7 +17,8 @@ public class DroneInfo {
     @Column(columnDefinition = "integer default 100")
     private Integer batteryCapacity = 100;
 
-    private Double currentLoad = 0D;
+    @Column(columnDefinition = "integer default 0")
+    private Integer currentLoad = 0;
 
     @OneToOne
     @MapsId
@@ -41,12 +42,12 @@ public class DroneInfo {
         return batteryCapacity;
     }
 
-    public Double getCurrentLoad() {
+    public Integer getCurrentLoad() {
         return currentLoad;
     }
 
-    public void setCurrentLoad(Double itemLineWeight) {
-        this.currentLoad += itemLineWeight;
+    public void addToCurrentLoad(Integer itemLineWeight) {
+        currentLoad += itemLineWeight;
     }
 
     public Drone getDrone() {

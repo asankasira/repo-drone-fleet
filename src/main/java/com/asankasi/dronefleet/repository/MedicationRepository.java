@@ -7,5 +7,5 @@ import org.springframework.data.repository.CrudRepository;
 public interface MedicationRepository extends CrudRepository<Medication, Long> {
 
     @Query(value = "SELECT min(unitWeight) FROM Medication")
-    Double getMinUnitWeight();
+    Integer getMinUnitWeight();
 }

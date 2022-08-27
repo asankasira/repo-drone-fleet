@@ -16,7 +16,7 @@ public class MedicationServiceImpl implements MedicationService {
     }
 
     @Override
-    public Double getMinUnitWeight() {
+    public Integer getMinUnitWeight() {
         return mediRepository.getMinUnitWeight();
     }
 

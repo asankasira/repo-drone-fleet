@@ -10,7 +10,11 @@ public class Medication {
     private Long id;
     private String name;
     private String code;
-    private Double unitWeight;
+
+    private Integer unitWeight;
+
+    @Lob
+    private Byte[] image;
 
     public Long getId() {
         return id;
@@ -24,7 +28,11 @@ public class Medication {
         return code;
     }
 
-    public Double getUnitWeight() {
+    public Integer getUnitWeight() {
         return unitWeight;
+    }
+
+    public Byte[] getImage() {
+        return image;
     }
 }

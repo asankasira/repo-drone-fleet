@@ -3,18 +3,14 @@ package com.asankasi.dronefleet.controller;
 
 import com.asankasi.dronefleet.model.Drone;
 import com.asankasi.dronefleet.model.DroneMedicationItemLine;
-import com.asankasi.dronefleet.model.Medication;
-import com.asankasi.dronefleet.repository.DroneItemLineRepository;
 import com.asankasi.dronefleet.response.CustomApiResponse;
 import com.asankasi.dronefleet.service.DroneAppService;
-import com.asankasi.dronefleet.service.MedicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 //@RequestMapping(path = "/drone-management", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -37,6 +33,11 @@ public class DroneAppController {
     @GetMapping("/available-drones")
     public List<Drone> getAvailableDrones() {
         return droneAppService.getAvailableDrones();
+    }
+
+    @GetMapping("/drones/{id}/medical-items")
+    public List<DroneMedicationItemLine> getLoadedMedicalItems(@PathVariable Long id) {
+        return droneAppService.getLoadedMedicalItems(id);
     }
 
     @PutMapping("/drones/{id}/medical-item-line")
