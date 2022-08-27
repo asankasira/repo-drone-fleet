@@ -9,8 +9,16 @@ import java.util.Map;
 import static com.asankasi.dronefleet.util.Constants.GENERAL_ERROR_KEY;
 
 public class CustomApiResponse {
-    private HttpStatus status = HttpStatus.OK;
+    private HttpStatus status;
     private final Map<String, Object> payLoad = new HashMap<>();
+
+    public CustomApiResponse() {
+        this(HttpStatus.OK);
+    }
+
+    public CustomApiResponse(HttpStatus status) {
+        this.status = status;
+    }
 
     public void addError(Object error) {
         payLoad.put(GENERAL_ERROR_KEY, error);

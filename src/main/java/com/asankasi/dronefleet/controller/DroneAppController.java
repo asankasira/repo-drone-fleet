@@ -37,12 +37,14 @@ public class DroneAppController {
 
     @PutMapping("/drones/{id}/medical-item-line")
     public ResponseEntity<?> loadMedicationItem(@RequestBody DroneMedicationItemLine itemLine, @PathVariable Long id) {
-        return droneAppService.loadMedicationItem(id, itemLine);
+        var customResp = droneAppService.loadMedicationItem(id, itemLine);
+        return createResponseEntity(customResp);
     }
 
     @PutMapping("/medical-item-line")
     public ResponseEntity<?> loadMedicationItemOnAvailableDrone(@RequestBody DroneMedicationItemLine itemLine) {
-        return droneAppService.loadMedicationItemOnAvailableDrone(itemLine);
+        var customResp = droneAppService.loadMedicationItemOnAvailableDrone(itemLine);
+        return createResponseEntity(customResp);
     }
 
     @GetMapping("/drone-info/{id}/battery-level")

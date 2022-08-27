@@ -1,21 +1,27 @@
 package com.asankasi.dronefleet.service;
 
-import com.asankasi.dronefleet.model.*;
+import com.asankasi.dronefleet.model.Drone;
+import com.asankasi.dronefleet.model.DroneInfo;
+import com.asankasi.dronefleet.model.DroneMedicationItemLine;
+import com.asankasi.dronefleet.model.State;
 import com.asankasi.dronefleet.repository.DroneInfoRepository;
 import com.asankasi.dronefleet.repository.DroneItemLineRepository;
 import com.asankasi.dronefleet.repository.DroneRepository;
 import com.asankasi.dronefleet.response.CustomApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.asankasi.dronefleet.util.Constants.*;
+import static com.asankasi.dronefleet.util.Constants.DRONE_BATTERY_THRESHOLD;
+import static com.asankasi.dronefleet.util.Constants.GENERAL_MESSAGE_KEY;
 
 @Service
 public class DroneAppServiceImpl implements DroneAppService {
@@ -83,49 +89,57 @@ public class DroneAppServiceImpl implements DroneAppService {
 
     @Override
     @Transactional
-    public ResponseEntity<?> loadMedicationItem(Long droneID, DroneMedicationItemLine itemLine) {
+    public CustomApiResponse loadMedicationItem(Long droneID, DroneMedicationItemLine itemLine) {
         var res = new CustomApiResponse();
 
         itemLine.setDroneID(droneID);
         var drone = findAvailableDrone(itemLine.getDroneID());
         if (drone == null) {
+            res.setStatus(HttpStatus.BAD_REQUEST);
             res.addError("Drone " + itemLine.getDroneID() + " is not available");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+            return res;
         }
 
         var med = medicationService.findMedication(itemLine.getMedicationID());
         if (med == null) {
+            res.setStatus(HttpStatus.BAD_REQUEST);
             res.addError("Medication " + itemLine.getMedicationID() + " is not available");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+            return res;
         }
 
         Integer itemLineWeight = itemLine.getQuantity() * med.getUnitWeight();
         if (drone.getRemainingWeight() < itemLineWeight) {
+            res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
             res.addError("Drone " + drone.getDroneID() + " insufficient loading space");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(res);
+            return res;
         }
 
         return packMedicationItem(drone, itemLine, itemLineWeight, res);
     }
 
     @Override
-    public ResponseEntity<?> loadMedicationItemOnAvailableDrone(DroneMedicationItemLine itemLine) {
+    public CustomApiResponse loadMedicationItemOnAvailableDrone(DroneMedicationItemLine itemLine) {
         var res = new CustomApiResponse();
 
         var med = medicationService.findMedication(itemLine.getMedicationID());
         if (med == null) {
+            res.setStatus(HttpStatus.BAD_REQUEST);
             res.addError("Medication " + itemLine.getMedicationID() + " is not available");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+            return res;
         }
 
         Integer itemLineWeight = itemLine.getQuantity() * med.getUnitWeight();
 
-        var pickedDrone = getAvailableDrones().stream()
+        var availableDrones = getAvailableDrones();
+        var pickedDrone = availableDrones.stream()
                 .filter(d -> d.getRemainingWeight() >= itemLineWeight)
                 .findAny().orElse(null);
         if (pickedDrone == null) {
-            res.addError("No suitable drones are available right now");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+            res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+            String msg = "Drones are not available for pick up";
+            msg = !availableDrones.isEmpty() ? "Load is too much for any available drone" : msg;
+            res.addError(msg);
+            return res;
         }
         itemLine.setDroneID(pickedDrone.getDroneID());
         res.addAttribute(GENERAL_MESSAGE_KEY, "Medication package is picked by Drone " + pickedDrone.getDroneID());
@@ -133,12 +147,11 @@ public class DroneAppServiceImpl implements DroneAppService {
         return packMedicationItem(pickedDrone, itemLine, itemLineWeight, res);
     }
 
-    private ResponseEntity<CustomApiResponse> packMedicationItem(Drone drone, DroneMedicationItemLine item, Integer itemLineWeight, CustomApiResponse res) {
-
+    private CustomApiResponse packMedicationItem(Drone drone, DroneMedicationItemLine item, Integer itemLineWeight, CustomApiResponse res) {
         if(item.getQuantity() == null || item.getQuantity() < 1) {
-            var errResp = new CustomApiResponse();
-            errResp.addError("Item quantity is invalid");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errResp);
+            var errRes = new CustomApiResponse(HttpStatus.BAD_REQUEST);
+            errRes.addError("Item quantity is invalid");
+            return errRes;
         }
 
         itemLineRepository.save(item);
@@ -159,7 +172,8 @@ public class DroneAppServiceImpl implements DroneAppService {
                 .addAttribute("maxWeight", drone.getMaxWeight())
                 .addAttribute("state", droneInfo.getState())
                 .addAttribute("currentLoad", droneInfo.getCurrentLoad());
-        return ResponseEntity.ok(res);
+
+        return res;
     }
 
     @Autowired
