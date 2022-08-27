@@ -17,7 +17,6 @@ public class DroneInfo {
     @Column(columnDefinition = "integer default 100")
     private Integer batteryCapacity = 100;
 
-    @Column(columnDefinition = "number default 0")
     private Double currentLoad = 0D;
 
     @OneToOne

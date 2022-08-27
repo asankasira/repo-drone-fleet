@@ -4,4 +4,6 @@ import com.asankasi.dronefleet.model.Medication;
 
 public interface MedicationService {
     Medication findMedication(Long id);
+
+    Double getMinUnitWeight();
 }

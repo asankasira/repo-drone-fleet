@@ -15,6 +15,11 @@ public class MedicationServiceImpl implements MedicationService {
         return mediRepository.findById(id).orElse(null);
     }
 
+    @Override
+    public Double getMinUnitWeight() {
+        return mediRepository.getMinUnitWeight();
+    }
+
     @Autowired
     public void setMediRepository(MedicationRepository mediRepository) {
         this.mediRepository = mediRepository;

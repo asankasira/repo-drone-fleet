@@ -5,6 +5,7 @@ import com.asankasi.dronefleet.model.Drone;
 import com.asankasi.dronefleet.model.DroneMedicationItemLine;
 import com.asankasi.dronefleet.model.Medication;
 import com.asankasi.dronefleet.repository.DroneItemLineRepository;
+import com.asankasi.dronefleet.response.CustomApiResponse;
 import com.asankasi.dronefleet.service.DroneAppService;
 import com.asankasi.dronefleet.service.MedicationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +21,13 @@ import java.util.Map;
 @RequestMapping(path = "/drone-management")
 public class DroneAppController {
     private DroneAppService droneAppService;
-    private MedicationService medicationService;
-    private DroneItemLineRepository itemLineRepository;
 
     @PostMapping( "/drones")
     public ResponseEntity<?> registerDrone(@RequestBody Drone drone) {
         if(drone.getMaxWeight() > 500) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Drone weight should not exceed 500"));
+            var res = new CustomApiResponse();
+            res.addError("Drone weight should not exceed 500");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
         }
         drone.getInfo().setDrone(drone);
         droneAppService.registerDrone(drone);
@@ -38,30 +39,23 @@ public class DroneAppController {
         return droneAppService.getAvailableDrones();
     }
 
+    @PutMapping("/drones/{id}/medical-item-line")
+    public ResponseEntity<?> loadMedicationItem(@RequestBody DroneMedicationItemLine itemLine, @PathVariable Long id) {
+        return droneAppService.loadMedicationItem(id, itemLine);
+    }
+
     @PutMapping("/medical-item-line")
-    public ResponseEntity<?> loadMedicationItem(@RequestBody DroneMedicationItemLine itemLine) {
-        var drone = droneAppService.findAvailableDrone(itemLine.getDroneID());
-        if(drone == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Drone " + itemLine.getDroneID() + " is not available"));
-        }
-
-        var m = medicationService.findMedication(itemLine.getMedicationID());
-        if(m == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "Medication " + itemLine.getMedicationID() + " is not available"));
-        }
-
-        String error = droneAppService.loadMedicationItem(drone, m, itemLine);
-        if(error != null) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", error));
-        }
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> loadMedicationItemOnAvailableDrone(@RequestBody DroneMedicationItemLine itemLine) {
+        return droneAppService.loadMedicationItemOnAvailableDrone(itemLine);
     }
 
     @GetMapping("/drone-info/{id}/battery-level")
     public ResponseEntity<?> checkBatteryStatus(@PathVariable Long id) {
         var batteryStatus = droneAppService.checkDroneBatteryStatus(id);
         if(batteryStatus == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "No drone stats info found for id: " + id));
+            var res = new CustomApiResponse();
+            res.addError("No drone stats info found for id: " + id);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
         }
         return ResponseEntity.ok(batteryStatus);
     }
@@ -69,15 +63,5 @@ public class DroneAppController {
     @Autowired
     public void setDroneAppService(DroneAppService droneAppService) {
         this.droneAppService = droneAppService;
-    }
-
-    @Autowired
-    public void setMedicationService(MedicationService medicationService) {
-        this.medicationService = medicationService;
-    }
-
-    @Autowired
-    public void setItemLineRepository(DroneItemLineRepository itemLineRepository) {
-        this.itemLineRepository = itemLineRepository;
     }
 }

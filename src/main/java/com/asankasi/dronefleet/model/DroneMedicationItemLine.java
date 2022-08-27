@@ -31,4 +31,8 @@ public class DroneMedicationItemLine {
     public Integer getQuantity() {
         return quantity;
     }
+
+    public void setDroneID(Long droneID) {
+        this.droneID = droneID;
+    }
 }
