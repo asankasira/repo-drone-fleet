@@ -37,7 +37,7 @@ public class DroneAppServiceImpl implements DroneAppService {
     @Override
     public CustomApiResponse registerDrone(Drone drone) {
         var res = new CustomApiResponse();
-        if(drone.getMaxWeight() > 500) {
+        if (drone.getMaxWeight() > 500) {
             res.setStatus(HttpStatus.BAD_REQUEST);
             res.addError("Drone weight should not exceed 500");
             return res;
@@ -70,7 +70,7 @@ public class DroneAppServiceImpl implements DroneAppService {
     public CustomApiResponse checkDroneBatteryStatus(Long droneID) {
         var res = new CustomApiResponse();
         var info = droneRepository.findById(droneID).map(Drone::getInfo).orElse(null);
-        if(info == null) {
+        if (info == null) {
             res.setStatus(HttpStatus.BAD_REQUEST);
             res.addError("No drone stats info found for id: " + droneID);
             return res;
@@ -96,28 +96,30 @@ public class DroneAppServiceImpl implements DroneAppService {
         var res = new CustomApiResponse();
 
         itemLine.setDroneID(droneID);
-        var drone = findAvailableDrone(itemLine.getDroneID());
-        if (drone == null) {
-            res.setStatus(HttpStatus.BAD_REQUEST);
-            res.addError("Drone " + itemLine.getDroneID() + " is not available");
+        var availableDrone = findAvailableDrone(itemLine.getDroneID());
+        if (availableDrone == null) {
+            var drone = droneRepository.findById(droneID).orElse(null);
+            String msg = (drone != null) ? ("Drone " + itemLine.getDroneID() + " is not available for pick up") : "Invalid drone id: " + itemLine.getDroneID();
+            res.setStatus(drone == null ? HttpStatus.BAD_REQUEST : HttpStatus.INTERNAL_SERVER_ERROR);
+            res.addError(msg);
             return res;
         }
 
         var med = medicationService.findMedication(itemLine.getMedicationID());
         if (med == null) {
             res.setStatus(HttpStatus.BAD_REQUEST);
-            res.addError("Medication " + itemLine.getMedicationID() + " is not available");
+            res.addError("Invalid Medication item: " + itemLine.getMedicationID());
             return res;
         }
 
         Integer itemLineWeight = itemLine.getQuantity() * med.getUnitWeight();
-        if (drone.getRemainingWeight() < itemLineWeight) {
+        if (availableDrone.getRemainingWeight() < itemLineWeight) {
             res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-            res.addError("Drone " + drone.getDroneID() + " insufficient loading space");
+            res.addError("Insufficient loading space on drone " + availableDrone.getDroneID());
             return res;
         }
 
-        return packMedicationItem(drone, itemLine, itemLineWeight, res);
+        return packMedicationItem(availableDrone, itemLine, itemLineWeight, res);
     }
 
     @Override
@@ -127,7 +129,7 @@ public class DroneAppServiceImpl implements DroneAppService {
         var med = medicationService.findMedication(itemLine.getMedicationID());
         if (med == null) {
             res.setStatus(HttpStatus.BAD_REQUEST);
-            res.addError("Medication " + itemLine.getMedicationID() + " is not available");
+            res.addError("Invalid Medication item: " + itemLine.getMedicationID());
             return res;
         }
 
@@ -139,8 +141,7 @@ public class DroneAppServiceImpl implements DroneAppService {
                 .findAny().orElse(null);
         if (pickedDrone == null) {
             res.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-            String msg = "Drones are not available for pick up";
-            msg = !availableDrones.isEmpty() ? "Load is too much for any available drone" : msg;
+            String msg = !availableDrones.isEmpty() ? "Load is too much for any available drone" : "Drones are not available for pick up";
             res.addError(msg);
             return res;
         }
@@ -151,7 +152,7 @@ public class DroneAppServiceImpl implements DroneAppService {
     }
 
     private CustomApiResponse packMedicationItem(Drone drone, DroneMedicationItemLine item, Integer itemLineWeight, CustomApiResponse res) {
-        if(item.getQuantity() == null || item.getQuantity() < 1) {
+        if (item.getQuantity() == null || item.getQuantity() < 1) {
             var errRes = new CustomApiResponse(HttpStatus.BAD_REQUEST);
             errRes.addError("Item quantity is invalid");
             return errRes;

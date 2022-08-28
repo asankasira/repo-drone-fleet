@@ -28,17 +28,17 @@ public class MedicationServiceImpl implements MedicationService {
     @Transactional
     @Override
     public CustomApiResponse uploadMedicationImage(Long medicationID, byte[] imageData) {
-       var resp = new CustomApiResponse();
-       var medication =  mediRepository.findById(medicationID).orElse(null);
-       if(medication == null) {
-           resp.setStatus(HttpStatus.BAD_REQUEST);
-           resp.addError("Medication " + medicationID + " is not available");
-           return resp;
-       }
-       medication.setImage(imageData);
-       mediRepository.save(medication);
-       resp.addAttribute(GENERAL_MESSAGE_KEY, "Image is uploaded for medication: " + medicationID);
-       return resp;
+        var resp = new CustomApiResponse();
+        var medication = mediRepository.findById(medicationID).orElse(null);
+        if (medication == null) {
+            resp.setStatus(HttpStatus.BAD_REQUEST);
+            resp.addError("Invalid Medication item: " + medicationID);
+            return resp;
+        }
+        medication.setImage(imageData);
+        mediRepository.save(medication);
+        resp.addAttribute(GENERAL_MESSAGE_KEY, "Image is uploaded for medication: " + medicationID);
+        return resp;
     }
 
     @Autowired
