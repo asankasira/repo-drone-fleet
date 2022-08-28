@@ -43,7 +43,7 @@ public class PeriodicSchedulerTask {
         droneAppService.updateDronesInfo(droneInfoList);
 
         var drones = droneAppService.findAllRegisteredDrones();
-        drones.forEach(d -> logger.info("Drone {} is on {}% battery level with status {}", d.getDroneID(), d.getBatteryCapacity(), d.getState()));
+        drones.forEach(d -> logger.info("Drone {} is on {} battery level with status {}", d.getDroneID(), d.getBatteryCapacity(), d.getState()));
         logger.info("---------------------------------------------------------------");
     }
 

@@ -4,6 +4,7 @@ import com.asankasi.dronefleet.model.Drone;
 import com.asankasi.dronefleet.model.DroneModel;
 import com.asankasi.dronefleet.model.State;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class DroneResponse {
@@ -12,7 +13,8 @@ public class DroneResponse {
     private DroneModel model;
     private Integer maxWeight;
     private State state;
-    private Integer batteryCapacity;
+    @JsonIgnore
+    private Integer batteryLevel;
     private Integer currentLoad;
 
     private DroneResponse() {
@@ -26,7 +28,7 @@ public class DroneResponse {
         res.model = drone.getModel();
         res.maxWeight = drone.getMaxWeight();
         res.state = drone.getInfo().getState();
-        res.batteryCapacity = drone.getInfo().getBatteryCapacity();
+        res.batteryLevel = drone.getInfo().getBatteryCapacity();
         res.currentLoad = drone.getInfo().getCurrentLoad();
         return res;
     }
@@ -35,8 +37,8 @@ public class DroneResponse {
         return droneID;
     }
 
-    public Integer getBatteryCapacity() {
-        return batteryCapacity;
+    public String getBatteryCapacity() {
+        return batteryLevel + "%";
     }
 
     public State getState() {

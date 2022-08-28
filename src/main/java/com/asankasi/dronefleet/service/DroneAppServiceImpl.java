@@ -174,6 +174,7 @@ public class DroneAppServiceImpl implements DroneAppService {
                 .addAttribute("model", drone.getModel())
                 .addAttribute("maxWeight", drone.getMaxWeight())
                 .addAttribute("state", droneInfo.getState())
+                .addAttribute("batteryCapacity", droneInfo.getBatteryCapacity() + "%")
                 .addAttribute("currentLoad", droneInfo.getCurrentLoad());
 
         return res;
