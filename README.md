@@ -5,8 +5,21 @@
    * Maven 3.x
 
 ### Instructions
+Please clone the repository using SSH or HTTP protocol. Then navigate the fetched directory and checkout the `main` branch. 
 
-Tomcat server port is configured to **8082** by default. Could be reconfigured to use a different port in application.yml
+#### Running from IDE
+* Import the maven project to your IDE and change application properties (server port) if required. Build the project using `mvn clean install` or `mvn clean install -DskipTests`
+* Once built is successful, use the IDE to run the main class `DroneFleetAppApplication`
+
+#### Using the Maven plugin
+Without importing project to IDE, you could run the same Maven build commands in CLI as above to build the project. Upon completion please invoke the spring boot maven plugin run goal as below.
+`mvn spring-boot:run`
+
+#### Running as a packaged application
+Maven build command create an executable jar on build completion. You can run application by executing the generated jar file too.
+`java -jar target/droneFleetApp-1.0.0-SNAPSHOT.jar`
+
+Tomcat server port is configured to use **8082** by default. Could be reconfigured to use a different port in application.yml
 
 **Note:** Drone model and state columns are mapped as enums in JPA Entity since all possible values are pre-defined. Please use the exact names when using any of them in request payloads.
 
