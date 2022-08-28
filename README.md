@@ -27,6 +27,7 @@ Tomcat server port is configured to use **8082** by default. Could be reconfigur
 Application is configured to use in-memory H2 database, Initial Medication data setup is available as a resource script (data.sql), gets preloaded on application startup. H2 console is enabled via application properties to inspect DB data.  
 Ex: http://localhost:8082/h2-console/
 
+### REST API Endpoints
 | Method | URI                                             | Description                                                                                                                                                                                                                    | Sample Request Payload     | Response                       |
 |--------|-------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------|--------------------------------|
 | POST   | `/drone-management/drones`                       | Registers a new Drone                                                                                                                                                                                                          | ![img.png](images/1.png)   | ![img.png](images/img.png)     |
