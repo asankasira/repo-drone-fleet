@@ -39,6 +39,23 @@ Ex: http://localhost:8082/h2-console/
 |        |                                                   |                                                                                                                                                                                                                                |                            |                                |
 | PATCH  | `/medication/upload-file/`                        | Uploads image file for a selected Medication                                                                                                                                                                                   | ![img.png](images/upload.png)     | ![img.png](images/uploadSuccess.png)  |
 
+
+#### Sample request payloads in text format
+Drone registration
+```
+{
+    "serialNumber": "UVT-675",
+    "model": "Cruiserweight",
+    "maxWeight": 350
+}
+```
+Loading a medication item
+```
+{
+    "medicationID": 3,
+    "quantity": 11
+}
+```
 ### State Transition
  Drone's state transition is autonomous. When is a drone is registered via API, drone state is set to IDLE by default with 100% battery capacity and 0 loaded weight. 
  As soon as any medication package is loaded, it is set to LOADING. A particular drone could be on LOADED state on passing any of the following criteria
