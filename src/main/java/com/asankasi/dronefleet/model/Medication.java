@@ -14,7 +14,7 @@ public class Medication {
     private Integer unitWeight;
 
     @Lob
-    private Byte[] image;
+    private byte[] image;
 
     public Long getId() {
         return id;
@@ -32,7 +32,11 @@ public class Medication {
         return unitWeight;
     }
 
-    public Byte[] getImage() {
+    public byte[] getImage() {
         return image;
+    }
+
+    public void setImage(byte[] image) {
+        this.image = image;
     }
 }
