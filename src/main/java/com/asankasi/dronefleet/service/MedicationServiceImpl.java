@@ -35,6 +35,13 @@ public class MedicationServiceImpl implements MedicationService {
             resp.addError("Invalid Medication item: " + medicationID);
             return resp;
         }
+
+        if(imageData == null || imageData.length == 0) {
+            resp.setStatus(HttpStatus.BAD_REQUEST);
+            resp.addError("Invalid image file");
+            return resp;
+        }
+
         medication.setImage(imageData);
         mediRepository.save(medication);
         resp.addAttribute(GENERAL_MESSAGE_KEY, "Image is uploaded for medication: " + medicationID);
