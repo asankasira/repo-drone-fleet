@@ -41,8 +41,10 @@ Ex: http://localhost:8082/h2-console/
 | PATCH  | `/medication/upload-file/`                        | Uploads image file for a selected Medication                                                                                                                                                                                   | ![img.png](images/upload.png)     | ![img.png](images/uploadSuccess.png)  |
 
 
-#### Sample request payloads in text format
-Drone registration
+### Sample request payloads in text format
+##### Drone registration
+
+with default values (state = IDLE, batteryCapacity = 100, currentLoad = 0)
 ```
 {
     "serialNumber": "UVT-675",
@@ -50,7 +52,21 @@ Drone registration
     "maxWeight": 350
 }
 ```
-Loading a medication item
+
+with custom values 
+```
+{
+    "serialNumber": "MVX-06549",
+    "model": "Middleweight",
+    "maxWeight": 250,
+    "info": {
+        "state": "IDLE",
+        "batteryCapacity": 22,
+        "currentLoad": 5
+    }
+}
+```
+##### Loading a medication item
 ```
 {
     "medicationID": 3,
@@ -58,8 +74,8 @@ Loading a medication item
 }
 ```
 ### State Transition
- Drone's state transition is autonomous. When is a drone is registered via API, drone state is set to IDLE by default with 100% battery capacity and 0 loaded weight. 
- As soon as any medication package is loaded, it is set to LOADING. A particular drone could be on LOADED state on passing any of the following criteria
+ Drone's state transition is autonomous. When is a drone is registered via API, drone's state is set to IDLE by default with 100% battery capacity and 0 loaded weight (unless custom values are specified). 
+ As soon as any medication package is loaded, it is set to LOADING. A particular drone's state could be in LOADED state on passing any of the following criteria
 * A drone is loaded to hold maximum weight capacity
 * Drone's remaining weight is inadequate to hold the minimum unit weight of preloaded medication items
 
