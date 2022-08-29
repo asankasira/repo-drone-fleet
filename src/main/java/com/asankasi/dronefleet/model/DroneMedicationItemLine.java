@@ -3,10 +3,7 @@ package com.asankasi.dronefleet.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class DroneMedicationItemLine {
@@ -20,6 +17,10 @@ public class DroneMedicationItemLine {
     private Long droneID;
     private Long medicationID;
     private Integer quantity;
+
+    @OneToOne
+    @JoinColumn(name = "medicationID", referencedColumnName = "ID", insertable = false, updatable = false)
+    Medication medication;
 
     public String getItemLineID() {
         return itemLineID;
@@ -43,5 +44,9 @@ public class DroneMedicationItemLine {
 
     public void setQuantity(Integer quantity) {
         this.quantity = quantity;
+    }
+
+    public Medication getMedication() {
+        return medication;
     }
 }

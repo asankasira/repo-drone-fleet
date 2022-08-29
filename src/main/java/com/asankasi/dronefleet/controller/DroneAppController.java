@@ -5,6 +5,7 @@ import com.asankasi.dronefleet.model.Drone;
 import com.asankasi.dronefleet.model.DroneMedicationItemLine;
 import com.asankasi.dronefleet.response.CustomApiResponse;
 import com.asankasi.dronefleet.response.DroneResponse;
+import com.asankasi.dronefleet.response.MedicationItemsResponse;
 import com.asankasi.dronefleet.service.DroneAppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -37,8 +38,8 @@ public class DroneAppController {
     }
 
     @GetMapping("/drones/{id}/medical-items")
-    public List<DroneMedicationItemLine> getLoadedMedicalItems(@PathVariable Long id) {
-        return droneAppService.getLoadedMedicalItems(id);
+    public List<MedicationItemsResponse> getLoadedMedicalItems(@PathVariable Long id) {
+        return droneAppService.getLoadedMedicalItems(id).stream().map(MedicationItemsResponse::fromDroneMedicationItem).toList();
     }
 
     @PutMapping("/drones/{id}/medical-item-line")
