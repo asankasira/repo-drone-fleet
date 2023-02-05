@@ -1,5 +1,6 @@
 package com.asankasi.dronefleet.service;
 
+import com.asankasi.dronefleet.exception.DataNotFoundException;
 import com.asankasi.dronefleet.model.Drone;
 import com.asankasi.dronefleet.model.DroneInfo;
 import com.asankasi.dronefleet.model.DroneMedicationItemLine;
@@ -15,16 +16,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static com.asankasi.dronefleet.model.State.*;
 import static com.asankasi.dronefleet.util.Constants.DRONE_BATTERY_THRESHOLD;
 import static com.asankasi.dronefleet.util.Constants.GENERAL_MESSAGE_KEY;
-import static com.asankasi.dronefleet.model.State.*;
 
 @Service
 public class DroneAppServiceImpl implements DroneAppService {
@@ -37,11 +37,6 @@ public class DroneAppServiceImpl implements DroneAppService {
     @Override
     public CustomApiResponse registerDrone(Drone drone) {
         var res = new CustomApiResponse();
-        if (drone.getMaxWeight() > 500) {
-            res.setStatus(HttpStatus.BAD_REQUEST);
-            res.addError("Drone weight should not exceed 500");
-            return res;
-        }
         drone.getInfo().setDrone(drone);
         var d = droneRepository.save(drone);
         res.addAttribute(GENERAL_MESSAGE_KEY, "Drone is registered with id " + d.getDroneID());
@@ -52,7 +47,7 @@ public class DroneAppServiceImpl implements DroneAppService {
     public List<DroneMedicationItemLine> getLoadedMedicalItems(Long droneID) {
         Drone drone = droneRepository.findById(droneID).orElse(null);
         if (drone == null) {
-            return Collections.emptyList();
+            throw new DataNotFoundException("Drone with ID " + droneID + " is not found");
         }
 
         //If same medication item found in multiple packed lines quantities are aggregated to form a single entry

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -26,7 +27,7 @@ public class DroneAppController {
     }
 
     @PostMapping( "/drones")
-    public ResponseEntity<?> registerDrone(@RequestBody Drone drone) {
+    public ResponseEntity<?> registerDrone(@RequestBody @Valid Drone drone) {
         var customResp = droneAppService.registerDrone(drone);
         return createResponseEntity(customResp);
     }

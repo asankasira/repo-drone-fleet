@@ -1,6 +1,8 @@
 package com.asankasi.dronefleet.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,11 +14,13 @@ public class Drone {
     private Long droneID;
 
     @Column(length = 100)
+    @NotBlank(message = "Serial number cannot be empty")
     private String serialNumber;
 
     @Enumerated(EnumType.STRING)
     private DroneModel model;
 
+    @Max(value = 500, message = "Drone weight cannot exceeds 500")
     private Integer maxWeight;
 
     @OneToOne(mappedBy = "drone", cascade = CascadeType.ALL)
